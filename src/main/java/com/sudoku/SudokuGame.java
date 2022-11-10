@@ -1,9 +1,9 @@
 package com.sudoku;
 
 public class SudokuGame {
+    private static final int POSSIBLE_VALUE_SIZE = 9;
     private static final int BLOCK_SIZE = 3;
     private static final UserService userService = new UserService();
-    private static final int POSSIBLE_VALUE_SIZE = 9;
     private final SudokuBoard sudokuBoard = new SudokuBoard(9);
     private final SingleSudokuElement [][] playBoard = new SingleSudokuElement[9][9];
     private int size = 9;
