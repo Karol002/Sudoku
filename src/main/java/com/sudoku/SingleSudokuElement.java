@@ -31,6 +31,15 @@ public class SingleSudokuElement {
         return value;
     }
 
+    public int getSinglePossibleValue() {
+        int singlePossibleValue = 0;
+        for (boolean possibleValue : possibleValues) {
+            if (!possibleValue) return singlePossibleValue;
+            singlePossibleValue++;
+        }
+        return 999;
+    }
+
     public void setValueBoard(int value) {
         this.value = value;
         possibleValues[value] = true;
