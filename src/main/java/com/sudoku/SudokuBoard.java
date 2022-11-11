@@ -23,7 +23,19 @@ public class SudokuBoard {
         return gameBoard;
     }
 
-    public int getSize() {
-        return size;
+    public void setGameBoard(List<SudokuRow> gameBoard) {
+        this.gameBoard = gameBoard;
+    }
+
+    public SudokuBoard clone() {
+        SudokuBoard clonedBoard = new SudokuBoard(size);
+        List<SudokuRow> clonedRowList = new ArrayList<>();
+
+        for (SudokuRow sudokuRow : gameBoard) {
+            clonedRowList.add(sudokuRow.clone());
+        }
+
+        clonedBoard.setGameBoard(clonedRowList);
+        return clonedBoard;
     }
 }

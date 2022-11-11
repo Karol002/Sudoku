@@ -3,28 +3,28 @@ package com.sudoku;
 public class SingleSudokuElement {
     private final static int EMPTY = -1;
     private final static int POSSIBLE_VALUES_QUANTITY = 9;
-    private boolean [] possibleValues;
+    private boolean [] impossibleValues;
     private int value;
 
     public SingleSudokuElement() {
         value = EMPTY;
-        possibleValues = new boolean[POSSIBLE_VALUES_QUANTITY];
+        impossibleValues = new boolean[POSSIBLE_VALUES_QUANTITY];
     }
 
-    public boolean[] getPossibleValues() {
-        return possibleValues;
+    public boolean[] getImpossibleValues() {
+        return impossibleValues;
     }
 
     public int getPossibleValuesQuantity() {
         int possibleValuesQuantity = 0;
-        for (boolean possibleValue : possibleValues) {
+        for (boolean possibleValue : impossibleValues) {
             if (!possibleValue) possibleValuesQuantity++;
         }
         return possibleValuesQuantity;
     }
 
-    public void setPossibleValues(int value) {
-        possibleValues[value] = true;
+    public void setImpossibleValue(int value) {
+        impossibleValues[value] = true;
     }
 
     public int getValue() {
@@ -33,7 +33,7 @@ public class SingleSudokuElement {
 
     public int getSinglePossibleValue() {
         int singlePossibleValue = 0;
-        for (boolean possibleValue : possibleValues) {
+        for (boolean possibleValue : impossibleValues) {
             if (!possibleValue) return singlePossibleValue;
             singlePossibleValue++;
         }
@@ -42,6 +42,22 @@ public class SingleSudokuElement {
 
     public void setValueBoard(int value) {
         this.value = value;
-        possibleValues[value] = true;
+        impossibleValues[value] = true;
+    }
+
+    public void setValue(int value) {
+        this.value = value;
+    }
+
+
+    public void setImpossibleValues(boolean[] impossibleValues) {
+        this.impossibleValues = impossibleValues;
+    }
+
+    public SingleSudokuElement clone() {
+        SingleSudokuElement clonedElement = new SingleSudokuElement();
+        clonedElement.setImpossibleValues(this.impossibleValues.clone());
+        clonedElement.setValue(this.value);
+        return clonedElement;
     }
 }

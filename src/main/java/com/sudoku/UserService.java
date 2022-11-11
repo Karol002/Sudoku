@@ -37,4 +37,8 @@ public class UserService {
         System.out.print("Chose value: "); int value = scanner.nextInt();
         return new MoveDTO(row, column, value);
     }
+
+    public void showErrorInformation() {
+        System.out.println("Error!!!");
+    }
 }

@@ -22,4 +22,20 @@ public class SudokuRow {
     public List<SingleSudokuElement> getSingleRow() {
         return singleRow;
     }
+
+    public void setSingleRow(List<SingleSudokuElement> singleRow) {
+        this.singleRow = singleRow;
+    }
+
+    public SudokuRow clone() {
+        SudokuRow clonedRow = new SudokuRow(size);
+        List<SingleSudokuElement> clonedSingleRow = new ArrayList<>();
+
+        for (SingleSudokuElement singleElement : singleRow) {
+            clonedSingleRow.add(singleElement.clone());
+        }
+
+        clonedRow.setSingleRow(clonedSingleRow);
+        return clonedRow;
+    }
 }
