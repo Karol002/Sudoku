@@ -1,4 +1,9 @@
-package com.sudoku;
+package com.sudoku.algortihm;
+
+import com.sudoku.board.SingleSudokuElement;
+import com.sudoku.board.SudokuBoard;
+import com.sudoku.user.MoveDTO;
+import com.sudoku.user.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,21 +12,57 @@ public class SudokuGame {
     private static final int POSSIBLE_VALUE_SIZE = 9;
     private static final int BLOCK_SIZE = 3;
     private static final UserService userService = new UserService();
-    private SudokuBoard sudokuBoard = new SudokuBoard(9);
-    private final SingleSudokuElement [][] playBoard = new SingleSudokuElement[9][9];
     private final List<GameBank> backtrack = new ArrayList<>();
-    private int size = 9;
+    private SingleSudokuElement[][] playBoard;
+    private SudokuBoard sudokuBoard;
+    private int size;
 
+    public void setStartedBoard() {
+        MoveDTO moveDTO;
+
+        userService.showBoard(sudokuBoard.getGameBoard());
+        while (!userService.askForMakeMove().equals("SUDOKU")) {
+            moveDTO = userService.makeMove();
+            if (moveDTO.getRow() < size && moveDTO.getRow() >= 0
+                    && moveDTO.getColumn() < size && moveDTO.getColumn() >= 0
+                    && moveDTO.getValue() < POSSIBLE_VALUE_SIZE && moveDTO.getValue() >= 0
+                    &&!isWritten(moveDTO.getRow(), moveDTO.getColumn(), moveDTO.getValue())){
+                sudokuBoard.getGameBoard()
+                        .get(moveDTO.getRow())
+                        .getSingleRow().get(moveDTO.getColumn())
+                        .setValueBoard(moveDTO.getValue());
+            } else {
+                userService.showEnteringDataError();
+            }
+            userService.showBoard(sudokuBoard.getGameBoard());
+        }
+
+    }
+
+    public void choseSize() {;
+        int localSize = userService.choseSize();
+        if (localSize == 1 || localSize == 2 || localSize == 3) {
+            localSize *= BLOCK_SIZE;
+            sudokuBoard = new SudokuBoard(localSize);
+            playBoard = new SingleSudokuElement[localSize][localSize];
+            size = localSize;
+        } else {
+            userService.showEnteringDataError();
+            choseSize();
+        }
+    }
+    
     public void resolveSudoku() {
+        choseSize();
         createPlayBoard();
+        setStartedBoard();
+
         try {
             startSudokuAlgorithm();
         } catch (moveImpossible e) {
             userService.showErrorInformation();
         }
     }
-
-
 
     private boolean startSudokuAlgorithm() throws moveImpossible {
         boolean action = true;
@@ -48,16 +89,7 @@ public class SudokuGame {
         boolean action = false;
 
         for (int i=0; i<POSSIBLE_VALUE_SIZE; i++) {
-            if (isWritten(row, column, i) && !playBoard[row][column].getImpossibleValues()[i]) {
-                playBoard[row][column].setImpossibleValue(i);
-                action = true;
-            }
-            if (playBoard[row][column].getPossibleValuesQuantity() == 1
-                    && playBoard[row][column].getValue() == -1
-                    && !isWritten(row, column, i)) {
-                playBoard[row][column].setValueBoard(playBoard[row][column].getSinglePossibleValue());
-                action = true;
-            }
+            if (setIfOnlyOnePossible(row, column, i)) action = true;
             if (!isWritten(row, column, i) && !isPossibleInRow(row, column, i)) {
                 playBoard[row][column].setValueBoard(i);
                 action = true;
@@ -88,16 +120,7 @@ public class SudokuGame {
         boolean action = false;
 
         for (int i=0; i<POSSIBLE_VALUE_SIZE; i++) {
-            if (isWritten(row, column, i) && !playBoard[row][column].getImpossibleValues()[i]) {
-                playBoard[row][column].setImpossibleValue(i);
-                action = true;
-            }
-            if (playBoard[row][column].getPossibleValuesQuantity() == 1
-                    && playBoard[row][column].getValue() == -1
-                    && !isWritten(row, column, i)) {
-                playBoard[row][column].setValueBoard(playBoard[row][column].getSinglePossibleValue());
-                action = true;
-            }
+            if (setIfOnlyOnePossible(row, column, i)) action = true;
             if (!isWritten(row, column, i) && !isPossibleInColumn(row, column, i)) {
                 playBoard[row][column].setValueBoard(i);
                 action = true;
@@ -128,16 +151,7 @@ public class SudokuGame {
         boolean action = false;
 
         for (int i=0; i<POSSIBLE_VALUE_SIZE; i++) {
-            if (isWritten(row, column, i) && !playBoard[row][column].getImpossibleValues()[i]) {
-                playBoard[row][column].setImpossibleValue(i);
-                action = true;
-            }
-            if (playBoard[row][column].getPossibleValuesQuantity() == 1
-                    && playBoard[row][column].getValue() == -1
-                    && !isWritten(row, column, i)) {
-                playBoard[row][column].setValueBoard(playBoard[row][column].getSinglePossibleValue());
-                action = true;
-            }
+            if (setIfOnlyOnePossible(row, column, i)) action = true;
             if (!isWritten(row, column, i) && !isPossibleInBlock(row, column, i)) {
                 playBoard[row][column].setValueBoard(i);
                 action = true;
@@ -173,6 +187,30 @@ public class SudokuGame {
             }
         }
         return false;
+    }
+
+    private boolean isWritten(int row, int column, int value) {
+        boolean isWritten = false;
+        if (isWrittenInBlock(row, column, value)) isWritten = true;
+        if (isWrittenInColumn(column, value)) isWritten = true;
+        if (isWrittenInRow(row, value)) isWritten = true;
+
+        return isWritten;
+    }
+
+    private boolean setIfOnlyOnePossible(int row, int column, int i) {
+        boolean action = false;
+        if (isWritten(row, column, i) && !playBoard[row][column].getImpossibleValues()[i]) {
+            playBoard[row][column].setImpossibleValue(i);
+            action = true;
+        }
+        if (playBoard[row][column].getPossibleValuesQuantity() == 1
+                && playBoard[row][column].getValue() == -1
+                && !isWritten(row, column, i)) {
+            playBoard[row][column].setValueBoard(playBoard[row][column].getSinglePossibleValue());
+            action = true;
+        }
+        return action;
     }
 
     private boolean choseValueForEmptyElement() {
@@ -218,15 +256,6 @@ public class SudokuGame {
             }
         }
         return false;
-    }
-
-    private boolean isWritten(int row, int column, int value) {
-        boolean isWritten = false;
-        if (isWrittenInBlock(row, column, value)) isWritten = true;
-        if (isWrittenInColumn(column, value)) isWritten = true;
-        if (isWrittenInRow(row, value)) isWritten = true;
-
-        return isWritten;
     }
 
 

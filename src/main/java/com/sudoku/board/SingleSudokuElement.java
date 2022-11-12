@@ -1,4 +1,4 @@
-package com.sudoku;
+package com.sudoku.board;
 
 public class SingleSudokuElement {
     private final static int EMPTY = -1;

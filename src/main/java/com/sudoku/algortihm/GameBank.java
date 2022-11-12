@@ -1,6 +1,6 @@
-package com.sudoku;
+package com.sudoku.algortihm;
 
-import java.util.List;
+import com.sudoku.board.SudokuBoard;
 
 public class GameBank {
     private final SudokuBoard bank;

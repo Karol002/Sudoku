@@ -1,4 +1,4 @@
-package com.sudoku;
+package com.sudoku.user;
 
 public class MoveDTO {
     private final int row;

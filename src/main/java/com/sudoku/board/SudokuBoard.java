@@ -1,4 +1,4 @@
-package com.sudoku;
+package com.sudoku.board;
 
 import java.util.ArrayList;
 import java.util.List;
